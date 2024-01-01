@@ -9,6 +9,8 @@ from langchain.memory import ConversationBufferMemory
 from langchain.chains import ConversationalRetrievalChain
 from htmlTemplates import css, bot_template, user_template
 from langchain.llms import HuggingFaceHub
+from qdrant_client import QdrantClient
+import os
 
 
 def get_pdf_text(pdf_docs):
@@ -36,7 +38,7 @@ def get_vector_store(text_chunks):
 
 def get_conversation_chain(vectorStore):
     # llm = ChatOpenAI()
-    llm = HuggingFaceHub(repo_id="google/flan-t5-xxl", model_kwargs={"temperature":0.5, "max_length":512})
+    llm = HuggingFaceHub(repo_id="google/flan-t5-small", model_kwargs={"temperature":0.5, "max_length":512})
 
     memory = ConversationBufferMemory(memory_key='chat_history', return_messages=True)
     conversation_chain = ConversationalRetrievalChain.from_llm(
@@ -60,6 +62,11 @@ def handle_userquestion(user_question):
 def main():
     load_dotenv()
 
+    qdrant_client = QdrantClient(
+        url="https://c1ea3a70-e824-4e28-a539-b425a95829ae.us-east4-0.gcp.cloud.qdrant.io:6333", 
+        api_key = os.getenv("QDRANT_API_KEY")
+    )
+
     st.set_page_config(page_title="Chat with Multiple PDF's", page_icon=":books:", layout="wide")
 
     st.write(css, unsafe_allow_html=True)
@@ -75,9 +82,6 @@ def main():
 
     if user_question:
         handle_userquestion(user_question)
-
-    # st.write(user_template.replace("{{MSG}}", "Hello robot") , unsafe_allow_html=True)
-    # st.write(bot_template.replace("{{MSG}}", "Hello human") , unsafe_allow_html=True)
 
 
     with st.sidebar:
