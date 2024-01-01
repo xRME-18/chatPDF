@@ -76,10 +76,6 @@ def main():
     if user_question:
         handle_userquestion(user_question)
 
-    # st.write(user_template.replace("{{MSG}}", "Hello robot") , unsafe_allow_html=True)
-    # st.write(bot_template.replace("{{MSG}}", "Hello human") , unsafe_allow_html=True)
-
-
     with st.sidebar:
         st.subheader("Your docs")
         pdf_docs = st.file_uploader("Upload PDF and click on process", type=["pdf"], accept_multiple_files=True)
